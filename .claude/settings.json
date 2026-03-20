@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Bash(journalctl *)",
+      "Bash(systemctl status *)",
+      "Bash(systemctl is-active *)",
+      "Bash(systemctl list-units *)",
+      "Bash(ps *)",
+      "Bash(ss *)",
+      "Bash(df *)",
+      "Bash(free *)",
+      "Bash(uptime)",
+      "Bash(ip addr *)",
+      "Bash(ip route *)",
+      "Bash(cat /var/log/*)",
+      "Bash(ls *)"
+    ]
+  }
+}
