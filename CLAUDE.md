@@ -10,28 +10,44 @@ Your goal is to fix things conservatively. When in doubt, observe and report rat
 
 ## System Overview
 
-**OS:** [e.g. Debian 12, Arch, OpenWrt]  
-**Primary interface (WAN):** [e.g. eth0]  
-**LAN interface:** [e.g. br0, eth1]  
-**Firewall tool:** [iptables / nftables / ufw]  
-**SSH port:** [port]  
+**Hostname:** redwood
+**OS:** Debian GNU/Linux 12 (bookworm)
+**Primary interface (WAN):** wan0 (enp1s0) — public IP 98.35.74.238
+**LAN interface:** lan0 (enp2s0) — 172.16.22.1/23
+**VPN tunnel:** tun0 — 172.16.24.2/24 (OpenVPN client, zayante)
+**Firewall tool:** nftables
+**SSH port:** 22 (default)
 
 ### Network services (touch carefully — see rules below)
-- [e.g. dnsmasq — DHCP and DNS]
-- [e.g. wireguard — VPN, wg0]
-- [e.g. nginx — reverse proxy for automation UIs]
+- `dnsmasq.service` — DHCP and DNS (config: /etc/dnsmasq.conf, /etc/dnsmasq.d/)
+- `openvpn-client@zayante.service` — VPN client (config: /etc/openvpn/client/zayante.conf), tun0
+- `nginx.service` — reverse proxy (port 80, 8079; config: /etc/nginx/sites-enabled/)
+- `nftables.service` — firewall (config: /etc/nftables.conf)
+- `postgresql@15-main.service` — database backend for meshview and graphite
 
 ### Home automation services (generally safe to restart)
-- [e.g. home-assistant.service]
-- [e.g. zigbee2mqtt.service]
-- [e.g. mosquitto.service]
-- [e.g. your-custom-daemon.service]
+- `mosquitto.service` — MQTT broker (port 1883)
+- `homebridge.service` — HomeKit bridge
+- `carbon-cache.service` — Graphite metrics ingestion (ports 2003, 2004)
+- `meshview-web.service` — MeshView web app (/home/zwhite/meshview-fork)
+- `meshview-db.service` — MeshView database daemon (/home/zwhite/meshview-fork)
+- `hestia-shed.service` — heater control via MQTT (/home/zwhite/home_automation/hestia)
+- `mqtt_triggers.service` — MQTT automation triggers (/home/zwhite/home_automation/mqtt_triggers)
+- `mqtt_battery_watch.service` — battery monitoring via MQTT
+- `ping2mqtt.service` — ping-based presence detection (/home/zwhite/home_automation/ping2mqtt)
+- `mqtt2discord.service` — MQTT → Discord bridge (/home/zwhite/home_automation/mqtt2discord)
+- `mqtt2graphite.service` — MQTT → Graphite bridge (/home/zwhite/home_automation/mqtt2graphite)
+- `openweathermaps2mqtt.service` — weather data → MQTT (/home/zwhite/home_automation/openweathermaps2mqtt)
+- `mqtt_json_exploder.service` — MQTT JSON message splitter
+- `uwsgi.service` — WSGI server for graphite web (config: /etc/uwsgi/apps-enabled/graphite.ini)
 
 ### Config file locations
-- Firewall: [path]
-- dnsmasq: [path]
-- WireGuard: [path]
-- Home automation: [path]
+- Firewall: `/etc/nftables.conf`
+- dnsmasq: `/etc/dnsmasq.conf`, `/etc/dnsmasq.d/`
+- OpenVPN: `/etc/openvpn/client/zayante.conf`
+- nginx: `/etc/nginx/sites-enabled/`
+- Home automation code: `/home/zwhite/home_automation/`
+- Homebridge: `/var/lib/homebridge/`
 
 ---
 
@@ -42,11 +58,10 @@ Before running ANY command that includes these, stop and print:
 `NETWORK CHANGE: [what you are about to do and why] — please confirm`
 
 Trigger terms:
-- `iptables`, `nftables`, `ip6tables`, `ufw`
+- `nft`, `nftables`, `iptables`, `ip6tables`
 - `ip link`, `ip addr`, `ip route`
-- `systemctl` acting on: [list network services from above]
-- Any edit to files under: `/etc/network/`, `/etc/wireguard/`, `/etc/nftables.conf`
-  (or wherever your firewall config lives)
+- `systemctl` acting on: `dnsmasq`, `openvpn-client@zayante`, `nginx`, `nftables`, `networking`
+- Any edit to files under: `/etc/network/`, `/etc/nftables.conf`, `/etc/openvpn/`
 - `sshd_config` or anything affecting SSH
 
 If the action would plausibly affect SSH access, explicitly say so and
@@ -101,11 +116,10 @@ systemctl restart [service]
 ss -tlnp
 ip addr show
 ip route show
-[iptables -L -n -v / nft list ruleset]   # pick one
+nft list ruleset
 
 # Quick health checks
 df -h
 free -h
 uptime
 ```
-
