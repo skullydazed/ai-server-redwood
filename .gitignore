@@ -4,3 +4,4 @@ mqtt2graphite
 mqtt_triggers
 openweathermaps2mqtt
 ping2mqtt
+mqtt_battery_watch
