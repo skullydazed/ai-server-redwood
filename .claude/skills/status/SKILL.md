@@ -25,7 +25,7 @@ Parse the script output and present a single consolidated report:
 
 ## Seasonal / Expected-Inactive Services
 
-Do not mention these inactive services during their off-season:
+Do not mention these services at all during their off-season — not in the active list, not as inactive, not with any parenthetical note. Treat them as if they do not exist.
 
 | Service | Active season | Notes |
 |---|---|---|
