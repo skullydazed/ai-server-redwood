@@ -10,6 +10,8 @@ Your goal is to fix things conservatively. When in doubt, observe and report rat
 
 ## System Overview
 
+This information is for general reference. Use this when building skills. **Do not use it when executing skills!**
+
 **Hostname:** redwood
 **OS:** Debian GNU/Linux 12 (bookworm)
 **Primary interface (WAN):** wan0 (enp1s0) — public IP 98.35.74.238
@@ -23,12 +25,13 @@ Your goal is to fix things conservatively. When in doubt, observe and report rat
 - `openvpn-client@zayante.service` — VPN client (config: /etc/openvpn/client/zayante.conf), tun0
 - `nginx.service` — reverse proxy (port 80, 8079; config: /etc/nginx/sites-enabled/)
 - `nftables.service` — firewall (config: /etc/nftables.conf)
-- `postgresql@15-main.service` — database backend for meshview and graphite
+- `postgresql@15-main.service` — database backend for meshview
 
 ### Home automation services (generally safe to restart)
 - `mosquitto.service` — MQTT broker (port 1883)
 - `homebridge.service` — HomeKit bridge
-- `carbon-cache.service` — Graphite metrics ingestion (ports 2003, 2004)
+- `victoria-metrics.service` — VictoriaMetrics time series database (Graphite-compatible ingestion)
+- `grafana-server.service` — Grafana dashboard server
 - `meshview-web.service` — MeshView web app (/home/zwhite/meshview-fork)
 - `meshview-db.service` — MeshView database daemon (/home/zwhite/meshview-fork)
 - `hestia-shed.service` — heater control via MQTT (/home/zwhite/home_automation/hestia)
@@ -36,10 +39,8 @@ Your goal is to fix things conservatively. When in doubt, observe and report rat
 - `mqtt_battery_watch.service` — battery monitoring via MQTT
 - `ping2mqtt.service` — ping-based presence detection (/home/zwhite/home_automation/ping2mqtt)
 - `mqtt2discord.service` — MQTT → Discord bridge (/home/zwhite/home_automation/mqtt2discord)
-- `mqtt2graphite.service` — MQTT → Graphite bridge (/home/zwhite/home_automation/mqtt2graphite)
+- `mqtt2graphite.service` — MQTT → VictoriaMetrics bridge via Graphite protocol (/home/zwhite/home_automation/mqtt2graphite)
 - `openweathermaps2mqtt.service` — weather data → MQTT (/home/zwhite/home_automation/openweathermaps2mqtt)
-- `mqtt_json_exploder.service` — MQTT JSON message splitter
-- `uwsgi.service` — WSGI server for graphite web (config: /etc/uwsgi/apps-enabled/graphite.ini)
 
 ### Config file locations
 - Firewall: `/etc/nftables.conf`
@@ -123,3 +124,32 @@ df -h
 free -h
 uptime
 ```
+
+## Memory and Persistence
+
+All learned preferences, standing rules, and project context must be written to this file (`CLAUDE.md`) — never to `~/.claude` or any memory system outside this repo. If something is worth remembering, it belongs here.
+
+---
+
+## UI Preferences
+
+- Use light theme (light background, dark text) for any web UI or HTML pages. Do not use dark themes unless asked.
+
+---
+
+## Grafana Dashboard Management
+
+- **Never regenerate dashboards from `/tmp/setup_grafana.py`** — the user edits dashboards
+  via the Grafana UI after initial creation. Regenerating would overwrite those changes.
+  Always patch `/var/lib/grafana/dashboards/*.json` files directly instead.
+
+- **Grafana 12 does not auto-reload provisioned files.** After patching a dashboard JSON,
+  two steps are always required:
+  1. Increment the `version` field in the JSON
+  2. `sudo systemctl restart grafana-server`
+
+---
+
+## Long Uptime Check
+
+When you start up, use `uptime` to see how long the system has been running. If longer than 30 days, suggest that the user apply updates and reboot. Remind them that this is a good security practice.
