@@ -20,3 +20,15 @@ for svc in "${SERVICES[@]}"; do
     echo ""
   fi
 done
+
+echo "=== RESOURCES ==="
+echo "--- disk ---"
+df -h --output=target,pcent,avail | grep -v tmpfs | tail -n +2
+echo "--- inodes ---"
+df -i | grep -v tmpfs | grep -v "^Filesystem" | awk '{print $6, $5, $4}'
+echo "--- memory ---"
+free -h | grep -E "Mem|Swap"
+echo "--- load ---"
+uptime
+echo "--- cpu_count ---"
+nproc

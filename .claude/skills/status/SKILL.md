@@ -12,7 +12,7 @@ When the user asks for status, run:
 /home/zwhite/home_automation/.claude/skills/status/check.sh
 ```
 
-The script prints each service's state, then logs for any non-active services.
+The script prints each service's state, logs for any non-active services, and a `=== RESOURCES ===` section with disk, inode, memory, load, and CPU count data.
 
 ## Reporting
 
@@ -22,6 +22,21 @@ Parse the script output and present a single consolidated report:
 2. Present a single consolidated report:
    - Active services: one-line list
    - Each non-active service: status (`inactive`/`failed`) + 1–2 sentence plain-English summary of the root cause from the logs (e.g. "missing virtualenv", "config file not found", "connection refused to broker")
+
+## Resources
+
+After the service report, append a resource summary from the `=== RESOURCES ===` section.
+
+**Thresholds — flag these as concerns:**
+- **Disk:** any filesystem >80% full
+- **Inodes:** any filesystem >80% inode usage
+- **Memory:** available RAM <500MB
+- **Load:** 15-minute load average > number of CPU cores
+- **Uptime:** >30 days → suggest applying updates and rebooting
+
+**Format:**
+- All clear: one line, e.g. `Resources: disk 2%, inodes <1%, mem 2.5G/15G used, load 0.01`
+- Any threshold exceeded: call it out as a separate concern with the specific value
 
 ## Seasonal / Expected-Inactive Services
 
