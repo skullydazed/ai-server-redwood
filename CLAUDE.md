@@ -143,10 +143,11 @@ All learned preferences, standing rules, and project context must be written to 
   via the Grafana UI after initial creation. Regenerating would overwrite those changes.
   Always patch `/var/lib/grafana/dashboards/*.json` files directly instead.
 
-- **Grafana 12 does not auto-reload provisioned files.** After patching a dashboard JSON,
-  two steps are always required:
+- **Grafana 12 auto-reloads provisioned dashboard files.** After patching a dashboard JSON,
+  only one step is required:
   1. Increment the `version` field in the JSON
-  2. `sudo systemctl restart grafana-server`
+
+  Do NOT restart grafana-server — it picks up the file change automatically.
 
 ---
 
