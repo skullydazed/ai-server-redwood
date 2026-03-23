@@ -32,6 +32,7 @@ graph LR
     mosquitto --> mqtt2discord
     mosquitto --> mqtt_battery_watch
     mosquitto --> hestia
+    mosquitto --> mqtt2ntfy --> ntfy
     Grafana --> ntfy
     ntfy --> client[mobile/browser]
 ```
@@ -44,7 +45,7 @@ Infrastructure services that the microservices depend on. These are not managed 
 |---|---|---|---|
 | mosquitto | `mosquitto.service` | 1883 | MQTT broker — central message bus |
 | nginx | `nginx.service` | 80, 8079 | Reverse proxy; configs in `/etc/nginx/sites-enabled/` |
-| ntfy | `ntfy.service` | 2586 | Push notification server at `http://redwood.lan:2586`; auth required; upstream `ntfy.sh` for mobile delivery |
+| ntfy | `ntfy.service` | 2586 | Push notification server at `http://redwood.lan:2586`; auth required; upstream [ntfy.sh](https://ntfy.sh) for mobile delivery |
 | VictoriaMetrics | `victoria-metrics.service` | — | Time-series DB with Graphite-compatible ingestion |
 | Grafana | `grafana-server.service` | — | Dashboard UI backed by VictoriaMetrics |
 | PostgreSQL | `postgresql@15-main.service` | — | Database backend for meshview |
@@ -60,6 +61,7 @@ Infrastructure services that the microservices depend on. These are not managed 
 | `openweathermaps2mqtt/` | `openweathermaps2mqtt.service` | Fetches OpenWeatherMap forecast hourly and publishes flattened fields to `weather/*` |
 | `ping2mqtt/` | `ping2mqtt.service` | Continuously pings configured hosts; publishes 10s/1m/5m rolling latency averages to `ping/*` |
 | `mqtt_battery_watch/` | `mqtt_battery_watch.service` | Monitors charger power draw; publishes to `discord/bike_battery` when crossing a wattage threshold |
+| `mqtt2ntfy/` | `mqtt2ntfy.service` | Forwards `ntfy/#` MQTT messages to ntfy push notification topics |
 
 ## Configuration
 
