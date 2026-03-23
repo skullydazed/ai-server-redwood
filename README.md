@@ -2,26 +2,38 @@
 
 Home automation services running on `redwood`, a Debian 12 Linux router that doubles as a home automation hub. Each service is a Python microservice managed by systemd, with MQTT as the central message bus.
 
-This repository is intended to be used along-side `claude`, the CLI interface to Claude Code.
+This repository is intended to be used along-side `claude`, the CLI interface to [Claude Code](https://code.claude.com/docs/en/overview). This is an example of a "pet" not "cattle". It's a proof of concept to show that agents can also be used for system administration tasks.
+
+## How Humans Should Use This
+
+Treat this like a jr sysadmin who learns quickly. Use plan mode to explain what you want to do and examine the plan. Explain what is wrong with the plan. When you are happy, accept the plan and watch it do complex sysadmin things.
+
+### Sudo
+
+To unleash the full power of this repo you will need to setup passwordless sudo. Usually you can `sudo visudo` and modify a line to include `NOPASSWD:` like this:
+
+```
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) NOPASSWD: ALL
+```
+
+I understand this is a scary idea. The `.claude/settings.json` explicitly locks all sudo commands behind an Ask, so you will be prompted before it can do anything with sudo.
 
 ## Architecture
 
 All services connect to a local [mosquitto](https://mosquitto.org/) MQTT broker at `127.0.0.1:1883`. Services either publish data to MQTT topics, subscribe to topics to trigger actions, or both. Time-series data flows from MQTT into VictoriaMetrics (via Graphite protocol) and is visualized in Grafana. Push notifications are delivered via a self-hosted ntfy server.
 
-```
-OpenWeatherMap API ───────────────────────────────┐
-                                                  ▼
-Network hosts ──── ping2mqtt ──────────────── mosquitto (MQTT broker)
-                                                  │
-                         ┌────────────────────────┤
-                         │                        │
-                   mqtt2graphite            mqtt_triggers
-                         │                  mqtt2discord
-                         ▼                  mqtt_battery_watch
-               VictoriaMetrics                hestia
-                         │
-                         ▼                    ntfy ──── mobile/browser
-                      Grafana
+```mermaid
+graph LR
+    OWM[OpenWeatherMap API] --> mosquitto
+    hosts[Network hosts] --> ping2mqtt --> mosquitto
+    mosquitto --> mqtt2graphite --> VictoriaMetrics --> Grafana
+    mosquitto --> mqtt_triggers
+    mosquitto --> mqtt2discord
+    mosquitto --> mqtt_battery_watch
+    mosquitto --> hestia
+    Grafana --> ntfy
+    ntfy --> client[mobile/browser]
 ```
 
 ## System Services
