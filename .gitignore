@@ -5,3 +5,4 @@ mqtt_triggers
 openweathermaps2mqtt
 ping2mqtt
 mqtt_battery_watch
+.claude/settings.local.json
