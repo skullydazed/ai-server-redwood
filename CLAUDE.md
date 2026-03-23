@@ -139,15 +139,17 @@ All learned preferences, standing rules, and project context must be written to 
 
 ## Grafana Dashboard Management
 
-- **Never regenerate dashboards from `/tmp/setup_grafana.py`** — the user edits dashboards
-  via the Grafana UI after initial creation. Regenerating would overwrite those changes.
-  Always patch `/var/lib/grafana/dashboards/*.json` files directly instead.
+- **Dashboards live in Grafana's database.** Provisioning has been decommissioned.
+  To edit dashboards, use the Grafana API (`GET /api/dashboards/uid/<uid>` to read,
+  `POST /api/dashboards/db` to save). Do not touch `/var/lib/grafana/dashboards/*.json`
+  directly.
 
-- **Grafana 12 auto-reloads provisioned dashboard files.** After patching a dashboard JSON,
-  only one step is required:
-  1. Increment the `version` field in the JSON
+- **Never use `/etc/grafana/provisioning/`** — it silently reverts UI edits whenever
+  files are reloaded. It has been disabled (`home.yaml.disabled`). Do not re-enable it
+  or add new provisioning configs.
 
-  Do NOT restart grafana-server — it picks up the file change automatically.
+- Do NOT restart grafana-server unless there is a specific reason. It is not needed
+  for dashboard changes.
 
 ---
 
