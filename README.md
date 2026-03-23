@@ -31,10 +31,11 @@ graph LR
     mosquitto --> mqtt_triggers
     mosquitto --> mqtt2discord
     mosquitto --> mqtt_battery_watch
-    mosquitto --> hestia
+    mosquitto <--> hestia
     mosquitto --> mqtt2ntfy --> ntfy
     Grafana --> ntfy
     ntfy --> client[mobile/browser]
+    mosquitto <--> homebridge --> HomeKit[HomeKit / Alexa]
 ```
 
 ## System Services
@@ -49,6 +50,7 @@ Infrastructure services that the microservices depend on. These are not managed 
 | VictoriaMetrics | `victoria-metrics.service` | — | Time-series DB with Graphite-compatible ingestion |
 | Grafana | `grafana-server.service` | — | Dashboard UI backed by VictoriaMetrics |
 | PostgreSQL | `postgresql@15-main.service` | — | Database backend for meshview |
+| homebridge | `homebridge.service` | 51872 / 8581 | HomeKit/Alexa bridge; exposes MQTT-connected devices (Z-Wave, Tasmota, Zigbee) via homebridge-mqttthing; config UI at port 8581; config in `/var/lib/homebridge/` |
 
 ## Services
 
