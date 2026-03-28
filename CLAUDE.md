@@ -38,7 +38,6 @@ This information is for general reference. Use this when building skills. **Do n
 - `mqtt_triggers.service` — MQTT automation triggers (/home/zwhite/home_automation/mqtt_triggers)
 - `mqtt_battery_watch.service` — battery monitoring via MQTT
 - `ping2mqtt.service` — ping-based presence detection (/home/zwhite/home_automation/ping2mqtt)
-- `mqtt2discord.service` — MQTT → Discord bridge (/home/zwhite/home_automation/mqtt2discord)
 - `mqtt2graphite.service` — MQTT → VictoriaMetrics bridge via Graphite protocol (/home/zwhite/home_automation/mqtt2graphite)
 - `openweathermaps2mqtt.service` — weather data → MQTT (/home/zwhite/home_automation/openweathermaps2mqtt)
 
@@ -150,6 +149,11 @@ All learned preferences, standing rules, and project context must be written to 
 
 - Do NOT restart grafana-server unless there is a specific reason. It is not needed
   for dashboard changes.
+
+- **Always include `X-Disable-Provenance: true`** on every Grafana provisioning API
+  call (`/api/v1/provisioning/...`). Without it, Grafana marks the resource as
+  externally managed and locks it in the UI. Fixing it requires direct SQLite surgery
+  on the `provenance_type` table.
 
 ---
 

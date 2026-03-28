@@ -34,7 +34,7 @@ Another task I completed was setting up a way for Grafana to send push notificat
      homebridge                     active
      … +28 lines (ctrl+o to expand)
 
-● All services active: victoria-metrics, grafana-server, homebridge, mqtt2discord, mqtt2graphite, mqtt_triggers, mqtt_battery_watch, nginx, openweathermaps2mqtt, ping2mqtt.
+● All services active: victoria-metrics, grafana-server, homebridge, mqtt2graphite, mqtt_triggers, mqtt_battery_watch, nginx, openweathermaps2mqtt, ping2mqtt.
 
   Resources: disk 2%, inodes 1%, mem 2.0G/15G used, load 0.11. All clear.
 
@@ -104,8 +104,7 @@ graph LR
     hosts[Network hosts] --> ping2mqtt --> mosquitto
     mosquitto --> mqtt2graphite --> VictoriaMetrics --> Grafana
     mosquitto --> mqtt_triggers
-    mosquitto --> mqtt2discord
-    mosquitto --> mqtt_battery_watch
+mosquitto --> mqtt_battery_watch
     mosquitto <--> hestia
     mosquitto --> mqtt2ntfy --> ntfy
     Grafana --> ntfy
@@ -133,7 +132,6 @@ Infrastructure services that the microservices depend on. These are not managed 
 |---|---|---|
 | `hestia/` | `hestia-shed.service` | Thermostat: reads temperature probe, controls heater switch via MQTT. Topics: `heater/<name>/status`, `heater/<name>/set` |
 | `mqtt_triggers/` | `mqtt_triggers.service` | Event-driven automation: motion-activated lights, door/window sensor alerts, bed light auto-off |
-| `mqtt2discord/` | `mqtt2discord.service` | Forwards anything published to `discord/#` to a Discord webhook |
 | `mqtt2graphite/` | `mqtt2graphite.service` | Buffers MQTT sensor readings and flushes to VictoriaMetrics every minute via Graphite protocol |
 | `openweathermaps2mqtt/` | `openweathermaps2mqtt.service` | Fetches OpenWeatherMap forecast hourly and publishes flattened fields to `weather/*` |
 | `ping2mqtt/` | `ping2mqtt.service` | Continuously pings configured hosts; publishes 10s/1m/5m rolling latency averages to `ping/*` |
