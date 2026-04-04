@@ -34,7 +34,7 @@ Another task I completed was setting up a way for Grafana to send push notificat
      homebridge                     active
      … +28 lines (ctrl+o to expand)
 
-● All services active: victoria-metrics, grafana-server, homebridge, mqtt2graphite, mqtt_triggers, mqtt_battery_watch, nginx, openweathermaps2mqtt, ping2mqtt.
+● All services active: victoria-metrics, grafana-server, homebridge, mqtt_prometheus_exporter, mqtt_triggers, mqtt_battery_watch, nginx, openweathermaps2mqtt, ping2mqtt.
 
   Resources: disk 2%, inodes 1%, mem 2.0G/15G used, load 0.11. All clear.
 
@@ -102,7 +102,7 @@ All services connect to a local [mosquitto](https://mosquitto.org/) MQTT broker 
 graph LR
     OWM[OpenWeatherMap API] --> mosquitto
     hosts[Network hosts] --> ping2mqtt --> mosquitto
-    mosquitto --> mqtt2graphite --> VictoriaMetrics --> Grafana
+    mosquitto --> mqtt_prometheus_exporter --> VictoriaMetrics --> Grafana
     mosquitto --> mqtt_triggers
 mosquitto --> mqtt_battery_watch
     mosquitto <--> hestia
@@ -132,7 +132,7 @@ Infrastructure services that the microservices depend on. These are not managed 
 |---|---|---|
 | `hestia/` | `hestia-shed.service` | Thermostat: reads temperature probe, controls heater switch via MQTT. Topics: `heater/<name>/status`, `heater/<name>/set` |
 | `mqtt_triggers/` | `mqtt_triggers.service` | Event-driven automation: motion-activated lights, door/window sensor alerts, bed light auto-off |
-| `mqtt2graphite/` | `mqtt2graphite.service` | Buffers MQTT sensor readings and flushes to VictoriaMetrics every minute via Graphite protocol |
+| `mqtt_prometheus_exporter/` | `mqtt_prometheus_exporter.service` | Subscribes to MQTT topics and exposes metrics as a Prometheus scrape endpoint for VictoriaMetrics |
 | `openweathermaps2mqtt/` | `openweathermaps2mqtt.service` | Fetches OpenWeatherMap forecast hourly and publishes flattened fields to `weather/*` |
 | `ping2mqtt/` | `ping2mqtt.service` | Continuously pings configured hosts; publishes 10s/1m/5m rolling latency averages to `ping/*` |
 | `mqtt_battery_watch/` | `mqtt_battery_watch.service` | Monitors charger power draw; publishes to `discord/bike_battery` when crossing a wattage threshold |

@@ -3,7 +3,7 @@
 
 SERVICES=(
   victoria-metrics grafana-server homebridge
-  mqtt2graphite mqtt_triggers
+  mqtt_prometheus_exporter mqtt_triggers
   nginx openweathermaps2mqtt ping2mqtt
   hestia-shed mosquitto
 )

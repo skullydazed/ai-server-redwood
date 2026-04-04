@@ -38,7 +38,7 @@ This information is for general reference. Use this when building skills. **Do n
 - `mqtt_triggers.service` — MQTT automation triggers (/home/zwhite/home_automation/mqtt_triggers)
 - `mqtt_battery_watch.service` — battery monitoring via MQTT
 - `ping2mqtt.service` — ping-based presence detection (/home/zwhite/home_automation/ping2mqtt)
-- `mqtt2graphite.service` — MQTT → VictoriaMetrics bridge via Graphite protocol (/home/zwhite/home_automation/mqtt2graphite)
+- `mqtt_prometheus_exporter.service` — MQTT → VictoriaMetrics bridge via Prometheus scrape (/home/zwhite/home_automation/mqtt_prometheus_exporter)
 - `openweathermaps2mqtt.service` — weather data → MQTT (/home/zwhite/home_automation/openweathermaps2mqtt)
 
 ### Config file locations
