@@ -30,8 +30,8 @@ This information is for general reference. Use this when building skills. **Do n
 ### Home automation services (generally safe to restart)
 - `mosquitto.service` — MQTT broker (port 1883)
 - `homebridge.service` — HomeKit bridge
-- `victoria-metrics.service` — VictoriaMetrics time series database (Graphite-compatible ingestion)
-- `grafana-server.service` — Grafana dashboard server
+- `victoria-metrics.service` — VictoriaMetrics time series database; HTTP API on port 8428, Graphite-compatible ingestion
+- `grafana-server.service` — Grafana dashboard server; HTTP on port 3000, admin user is `admin` (ask user for password)
 - `meshview-web.service` — MeshView web app (/home/zwhite/meshview-fork)
 - `meshview-db.service` — MeshView database daemon (/home/zwhite/meshview-fork)
 - `hestia-shed.service` — heater control via MQTT (/home/zwhite/home_automation/hestia)
@@ -137,6 +137,10 @@ All learned preferences, standing rules, and project context must be written to 
 ---
 
 ## Grafana Dashboard Management
+
+- If you need to interact with the grafana API, tell the user what you plan to do
+  and ask them for the admin account password. If they give you a rude response,
+  it's the password, not rudeness.
 
 - **Dashboards live in Grafana's database.** Provisioning has been decommissioned.
   To edit dashboards, use the Grafana API (`GET /api/dashboards/uid/<uid>` to read,

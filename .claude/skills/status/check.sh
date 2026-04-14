@@ -3,6 +3,7 @@ SERVICES=(
   victoria-metrics grafana-server homebridge
   mqtt_prometheus_exporter mqtt_triggers mqtt_battery_watch
   nginx openweathermaps2mqtt ping2mqtt
+  mosquitto dnsmasq mqtt2pushover
 )
 
 for svc in "${SERVICES[@]}"; do

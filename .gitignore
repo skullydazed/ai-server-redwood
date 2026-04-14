@@ -8,3 +8,4 @@ mqtt_battery_watch
 mqtt2ntfy
 .claude/settings.local.json
 mqtt2pushover
+mqtt_prometheus_exporter
